@@ -1,2 +1,3 @@
-from transformers import pipeline
-print(pipeline('sentiment-analysis')('we love you'))
+import torch
+print(torch.__version__)
+print(torch.cuda.is_available())
