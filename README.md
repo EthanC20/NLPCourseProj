@@ -2,4 +2,4 @@
 
 HITsz NLP course project
 
-supervisor: Ruifeng Xu
+advisor: Ruifeng Xu
