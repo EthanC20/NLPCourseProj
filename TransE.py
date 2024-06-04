@@ -101,11 +101,11 @@ if __name__ == '__main__':
     # 参数设置
     train_batch_size = 100000  # batchsize增大，得分略有上升
     dev_batch_size = 20  # 显存不够就调小
-    epochs = 40
+    epochs = 20
     margin = 1
     print_frequency = 5  # 每多少step输出一次信息
     validation = True  # 是否验证，验证比较费时，注意loss不是越小效果越好哦!!!
-    dev_interval = 5  # 每多少轮验证一次
+    dev_interval = 2  # 每多少轮验证一次
     best_mrr = 0
     learning_rate = 0.001  # 学习率建议粗调0.01-0.001，精调0.001-0.0001
     distance_norm = 3  # 论文是L1距离效果不好，取2或3效果好
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     # 构建模型
     model = TransE(len(ent2id), len(rel2id), norm=distance_norm, dim=embedding_dim).cuda()
-    # model.load_state_dict(torch.load('transE.pth'))
+    model.load_state_dict(torch.load('transE_best.pth'))
 
     # mrr, hits1, hits3, hits10 = model.evaluate(dev_data_loader)
     # print(f'mrr: {mrr}, hit@1: {hits1}, hit@3: {hits3}, hit@10: {hits10}')
@@ -138,16 +138,16 @@ if __name__ == '__main__':
 
             positive_triples = torch.stack((local_heads, local_relations, local_tails), dim=1).cuda()
 
-            # 生成负样本
-            head_or_tail = torch.randint(high=2, size=local_heads.size())
-            random_entities = torch.randint(high=len(ent2id), size=local_heads.size())
-            broken_heads = torch.where(head_or_tail == 1, random_entities, local_heads)
-            broken_tails = torch.where(head_or_tail == 0, random_entities, local_tails)
-            negative_triples = torch.stack((broken_heads, local_relations, broken_tails), dim=1).cuda()
-
-            # # 生成负样本, 只打乱tail
+            # # 生成负样本
+            # head_or_tail = torch.randint(high=2, size=local_heads.size())
             # random_entities = torch.randint(high=len(ent2id), size=local_heads.size())
-            # negative_triples = torch.stack((random_entities, local_relations, random_entities), dim=1).cuda()
+            # broken_heads = torch.where(head_or_tail == 1, random_entities, local_heads)
+            # broken_tails = torch.where(head_or_tail == 0, random_entities, local_tails)
+            # negative_triples = torch.stack((broken_heads, local_relations, broken_tails), dim=1).cuda()
+
+            # 生成负样本, 只打乱tail
+            random_entities = torch.randint(high=len(ent2id), size=local_heads.size())
+            negative_triples = torch.stack((random_entities, local_relations, random_entities), dim=1).cuda()
 
             optimizer.zero_grad()
             pd, nd = model(positive_triples, negative_triples)

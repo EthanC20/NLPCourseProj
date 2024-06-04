@@ -61,4 +61,47 @@ class GNN(nn.Module):
         values, indices = (h_add_r - embed_tail).norm(p=self.norm, dim=2).topk(k, largest=False)
 
         return values, indices
-    
+
+
+if __name__ == '__main__':
+    # 读取数据
+    with open('OpenBG500/OpenBG500_entity2text.tsv', 'r', encoding='utf-8') as fp:
+        dat = fp.readlines()
+        lines = [line.strip('\n').split('\t') for line in dat]
+    ent2id = {line[0]: i for i, line in enumerate(lines)}
+    with open('OpenBG500/OpenBG500_relation2text.tsv', 'r', encoding='utf-8') as fp:
+        dat = fp.readlines()
+        lines = [line.strip().split('\t') for line in dat]
+    rel2id = {line[0]: i for i, line in enumerate(lines)}
+    with open('OpenBG500/OpenBG500_train.tsv', 'r', encoding='utf-8') as fp:
+        dat = fp.readlines()
+        train = [line.strip('\n').split('\t') for line in dat]
+    with open('OpenBG500/OpenBG500_dev.tsv', 'r', encoding='utf-8') as fp:
+        dat = fp.readlines()
+        dev = [line.strip('\n').split('\t') for line in dat]
+
+    train_dataset = TripleDataset(ent2id, rel2id, train)
+    dev_dataset = TripleDataset(ent2id, rel2id, dev)
+    train_loader = data.DataLoader(train_dataset, batch_size=32, shuffle=True)
+    dev_loader = data.DataLoader(dev_dataset, batch_size=32, shuffle=False)
+
+    model = GNN(len(ent2id), len(rel2id))
+    model = model.cuda()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.MarginRankingLoss(margin=1.0)
+
+    print("start training")
+    for epoch in range(10):
+        model.train()
+        for i, (positive_triplets, negative_triplets) in enumerate(tqdm.tqdm(train_loader)):
+            positive_triplets = positive_triplets.cuda()
+            negative_triplets = negative_triplets.cuda()
+            positive_distances, negative_distances = model(positive_triplets, negative_triplets)
+            target = torch.ones(positive_distances.shape[0]).cuda()
+            loss = criterion(positive_distances, negative_distances, target)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        model.eval()
+        mrr, hits_1, hits_3, hits_10 = model.evaluate(dev_loader)
+        print(f"Epoch {epoch}: MRR: {mrr}, Hits@1: {hits_1}, Hits@3: {hits_3}, Hits@10: {hits_10}")
