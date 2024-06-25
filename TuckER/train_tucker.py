@@ -13,9 +13,9 @@ RES = 'result.txt'
 class Experiment:
 
     def __init__(self, learning_rate=0.0005, ent_vec_dim=200, rel_vec_dim=200, 
-                 num_iterations=500, batch_size=128, decay_rate=0., cuda=False, 
+                 num_iterations=500, batch_size=200, decay_rate=1.0, cuda=False, 
                  input_dropout=0.3, hidden_dropout1=0.4, hidden_dropout2=0.5,
-                 label_smoothing=0.):
+                 label_smoothing=0.1):
         self.learning_rate = learning_rate
         self.ent_vec_dim = ent_vec_dim
         self.rel_vec_dim = rel_vec_dim
@@ -26,9 +26,9 @@ class Experiment:
         self.cuda = cuda
         self.kwargs = {"input_dropout": input_dropout, "hidden_dropout1": hidden_dropout1,
                        "hidden_dropout2": hidden_dropout2}
-        if not os.path.exists('./results'):
-            os.mkdir('./results/')
-        with open(f'./results/{RES}','w') as _:
+        if not os.path.exists('TuckER\\results'):
+            os.mkdir('TuckER\\results')
+        with open(f'TuckER\\results\\{RES}','w') as _:
             pass
         
     def get_data_idxs(self, data):
@@ -87,7 +87,7 @@ class Experiment:
             for j in range(data_batch.shape[0]):
 
                 if mode == 'test':
-                    with open(f'./results/{RES}','a+') as fp:
+                    with open(f'TuckER\\results\\{RES}','a+') as fp:
                         fp.write(f"{e1_idx[j].item()} {r_idx[j].item()} {' '.join(map(str,sort_idxs[j][:10]))}\n")
 
                 rank = np.where(sort_idxs[j]==e2_idx[j].item())[0][0]
@@ -170,11 +170,11 @@ class Experiment:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=str, default="FB15k-237", nargs="?",
+    parser.add_argument("--dataset", type=str, default="OpenBG-IMG", nargs="?",
                     help="Which dataset to use: FB15k, FB15k-237, WN18 or WN18RR.")
     parser.add_argument("--num_iterations", type=int, default=500, nargs="?",
                     help="Number of iterations.")
-    parser.add_argument("--batch_size", type=int, default=128, nargs="?",
+    parser.add_argument("--batch_size", type=int, default=200, nargs="?",
                     help="Batch size.")
     parser.add_argument("--lr", type=float, default=0.0005, nargs="?",
                     help="Learning rate.")
@@ -197,7 +197,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     dataset = args.dataset
-    data_dir = "data/%s/" % dataset
+    data_dir = "TuckER\\data\\OpenBG-IMG"
     torch.backends.cudnn.deterministic = True 
     seed = 20
     np.random.seed(seed)
@@ -210,5 +210,3 @@ if __name__ == '__main__':
                             input_dropout=args.input_dropout, hidden_dropout1=args.hidden_dropout1, 
                             hidden_dropout2=args.hidden_dropout2, label_smoothing=args.label_smoothing)
     experiment.train_and_eval()
-                
-

@@ -24,3 +24,10 @@ TuckER/tucker/data/WN18/Wordnet3.0-LICENSE
 TuckER/tucker/data/WN18RR/test.txt
 TuckER/tucker/data/WN18RR/train.txt
 TuckER/tucker/data/WN18RR/valid.txt
+TuckER/data/OpenBG-IMG/valid.tsv
+TuckER/cover/__pycache__/__init__.cpython-39.pyc
+TuckER/cover/__pycache__/load_data.cpython-39.pyc
+TuckER/data/OpenBG-IMG/entity2id.txt
+TuckER/data/OpenBG-IMG/relation2id.txt
+TuckER/results/result.txt
+TuckER/tucker/__pycache__/model.cpython-39.pyc

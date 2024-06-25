@@ -15,20 +15,20 @@ class Data:
         
         self.entity_idxs = {self.entities[i]:i for i in range(len(self.entities))}
         self.relation_idxs = {self.relations[i]:i for i in range(len(self.relations))}
-        with open(f'{data_dir}/entity2id.txt', 'w') as fp:
+        with open(f'{data_dir}\\entity2id.txt', 'w') as fp:
             res = [str(len(self.entity_idxs))+'\n']
             for k,v in self.entity_idxs.items():
                 res.append(f'{k}\t{v}\n')
             fp.writelines(res)
 
-        with open(f'{data_dir}/relation2id.txt', 'w') as fp:
+        with open(f'{data_dir}\\relation2id.txt', 'w') as fp:
             res = [str(len(self.relation_idxs))+'\n']
             for k,v in self.relation_idxs.items():
                 res.append(f'{k}\t{v}\n')
             fp.writelines(res)
 
     def load_data(self, data_dir, data_type="train", reverse=False):
-        with open("%s%s.tsv" % (data_dir, data_type), "r") as f:
+        with open("%s\\%s.tsv" % (data_dir, data_type), "r") as f:
             data = f.read().strip().split("\n")
             data = [i.split() for i in data]
             if reverse:

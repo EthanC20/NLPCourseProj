@@ -2,14 +2,8 @@ import os
 import random
 
 
-if not os.path.exists('./data'):
-    os.mkdir('./data/')
-
-if not os.path.exists('./data/OpenBG-IMG'):
-    os.mkdir('./data/OpenBG-IMG/')
-
-src_path = '../data/OpenBG-IMG/'
-tgt_path = './data/OpenBG-IMG/'
+src_path = 'TuckER\data\OpenBG-IMG'
+tgt_path = 'TuckER\data\OpenBG-IMG'
 
 random.seed(123)
 
