@@ -8,4 +8,6 @@ This course project is my attempt to get started with graph neural networks. The
 
 
 TuckER TBD
+
+
 MoCoSA TBD
