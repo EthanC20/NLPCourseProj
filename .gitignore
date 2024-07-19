@@ -31,3 +31,5 @@ TuckER/data/OpenBG-IMG/entity2id.txt
 TuckER/data/OpenBG-IMG/relation2id.txt
 TuckER/results/result.txt
 TuckER/tucker/__pycache__/model.cpython-39.pyc
+TuckER_best.pth
+TuckER_latest.pth
